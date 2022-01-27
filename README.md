@@ -57,7 +57,7 @@ Genes of interest (positions in hg38)
 
 ## 2) Association analyses
 
-# Fisher association and logistic regression
+Fisher association and logistic regression
 
     plink --bfile AMP_ATP13A2 --fisher --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --out AMP_ATP13A2
     plink --bfile AMP_ATP13A2 --logistic --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt \
