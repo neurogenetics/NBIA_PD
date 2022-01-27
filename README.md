@@ -321,5 +321,56 @@ Example R script
     > total <- merge(A,B, by="Start")
     > write.table(total, file="AMP_FA2H_HGMD.txt",  quote=F, row.names = F, sep = "\t") ...
 
-Created a variants_of_interest_AMP.txt list with: chr start stop gene (but with no header). Using this list for association analysis and homo/hetero insight Also creating list of genes with HGMD variants for loop.
+Created a combined variants_of_interest_AMP.txt list with: chr start stop gene_name, with no header. Using this list for association analysis and compound heterozygous insight. Separately creating a one column list of those genes names that have variants in the variants_of_interest_AMP.txt file.
 
+Example
+
+    # head variants_of_interest_AMP.txt
+    1	17000494	17000494	ATP13A2
+    1	17005754	17005754	ATP13A2
+    2	171449955	171449955	DCAF17
+    2	171481070	171481070	DCAF17
+    3	149178609	149178609	CP
+    3	149183513	149183513	CP
+	
+	# head gene_list.txt
+	ATP13A2
+    DCAF17
+    CP
+    FA2H
+    C19orf12
+    FTL
+    PANK2
+    PLA2G6
+
+Loop to extract variants of interest from plink files
+
+    cat genes_list.txt | while read LINE
+    do
+    plink --bfile AMP_$LINE --extract range variants_of_interest_AMP.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt \
+    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out TEMP_$LINE
+    done
+
+Create list of temps to merge together minus first temp (in our case  no TEMP_ATP13A2)
+
+    # vim temp_outputs
+    # head temp_outputs.txt
+    TEMP_DCAF17
+    TEMP_CP
+    TEMP_FA2H
+    TEMP_C19orf12
+    TEMP_FTL
+    TEMP_PANK2
+    TEMP_PLA2G6
+    
+Merge plink files
+
+    plink --bfile TEMP_ATP13A2 --merge-list temp_outputs.txt --make-bed --out ALL_AMP
+
+Association with variants of interest
+
+    plink --bfile ALL_AMP --assoc --out  ALL_AMP_freqs
+
+Recoding to .raw file for downstream analysis
+
+    plink -bfile ALL_AMP --recode A --out ALL_AMP
