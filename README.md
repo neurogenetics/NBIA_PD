@@ -6,6 +6,7 @@
 
 ## Structure of ReadMe
 [1) Locating and extracting data for our genes of interest](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#1-locating-and-extracting-data)
+
 For the purpose of this ReadMe, we will be working with WGS AMP_PD v 2.5 data. The whole analysis is repeated with WES data from UKBiobank and will be briefly shown at the end.
 ### 2) Association analyses
 ### 3) Annotation and finding variants of interest
