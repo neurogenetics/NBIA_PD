@@ -8,7 +8,8 @@
 ### [1) Locating and extracting data for our genes of interest](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#1-locating-and-extracting-data)
 
 For the purpose of this ReadMe, we will be working with WGS AMP_PD v 2.5 data. The whole analysis is repeated with WES data from UKBiobank and will be briefly shown at the end.
-### 2) Association analyses
+### [2) Association analyses](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#2-association-analyses-1)
+
 ### 3) Annotation and finding variants of interest
 Annotated variants will be filtered by coding variants and those reported in HGMD. 
 ### 4) Burden analyses
