@@ -35,7 +35,7 @@ Genes of interest (positions in hg38)
 **_FTL_**  19: 48,965,309-48,966,879  
 **_PANK2_**  20: 3,888,839-3,929,882  
 **_PLA2G6_**  22: 38,111,495-38,214,778  
-*WDR45 was initially included but limited data for X chromosome
+*WDR45 was initially included but was evenutally left out due to limited data for X chromosome
 
 	# Working directory for analysis
 	cd /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/
