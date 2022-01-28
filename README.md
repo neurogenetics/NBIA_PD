@@ -18,7 +18,7 @@ Annotated variants will be filtered by coding variants and those reported in HGM
 Running individual gene burdens for both all and coding variants, as well as a gene-set burden analysis.
 ### [5) Inspection of compound heterozygotes](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#5-compound-heterozygotes)
 
-### 6) Other data
+### [6) Other data](
 
 
 Lets get started....
