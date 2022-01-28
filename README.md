@@ -5,7 +5,7 @@
 **Aim:** Neurodegeneration with brain iron accumulation (NBIA) represents a group of inherited heterogeneous neurodegenerative disorders characterized by iron accumulation and the presence of axonal spheroids in the basal ganglia and other brain areas. Given the rarity of the disease, it can often go unrecognized or misdiagnosed. In PD, iron accumulation is a cardinal feature of degenerating regions in the brain and seems to be a key player in mechanisms that precipitate cell death. The aim of this study was to further explore the relationship between NBIA associated genes and PD etiology. We examined whether a genetic burden of variants in NBIA genes could contribute to the risk of developing PD by performing gene-based and single variant association analyses.
 
 ## Structure of ReadMe
-### 1) Locating and extracting data for our genes of interest 
+[### 1) Locating and extracting data for our genes of interest](Locating-and-extracting-data) 
 For the purpose of this ReadMe, we will be working with WGS AMP_PD v 2.5 data. The whole analysis is repeated with WES data from UKBiobank and will be briefly shown at the end.
 ### 2) Association analyses
 ### 3) Annotation and finding variants of interest
