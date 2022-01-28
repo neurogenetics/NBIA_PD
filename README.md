@@ -13,7 +13,8 @@ For the purpose of this ReadMe, we will be working with WGS AMP_PD v 2.5 data. T
 ### [3) Annotation and finding variants of interest](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#3-annotation-and-variants-of-interest)
 
 Annotated variants will be filtered by coding variants and those reported in HGMD. 
-### 4) Burden analyses
+### [4) Burden analyses](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#4-burden-analyses-1)
+
 Running individual gene burdens for both all and coding variants, as well as a gene-set burden analysis.
 ### 5) Inspection of compound heterozygotes
 
