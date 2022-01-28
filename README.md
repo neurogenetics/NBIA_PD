@@ -315,12 +315,17 @@ For further analysis we filtered annotated variants per gene by exonic or splici
 
 Example R script
 
-    > A <- fread("AMP_FA2H.trimmed.annotation.forR.txt", header = T)
-    > B <- fread("/Users/alvarezjerezp2/Desktop/HGMD_info/HGMD_FA2H.txt", header=T)
-    > B$V12 <- B$V13 <- B$V14 <- B$V15 <- B$V16 <- B$V17 <- B$V18 <- B$V19<- B$V20 <- B$V21 <- B$V22 <- B$V23 <-B$V24 <-  NULL
-    > colnames(B) <- c("CHR", "Start","ID","REF","ALT","HGMD Description","HGVS nucleotide", "HGVS protein","Variant class","Variant type", "Reported phenotype")
-    > total <- merge(A,B, by="Start")
-    > write.table(total, file="AMP_FA2H_HGMD.txt",  quote=F, row.names = F, sep = "\t") ...
+    module load R/3.6.0 
+    R
+    require(data.table)
+    library(dplyr)
+
+
+    A <- fread("AMP_FA2H.trimmed.annotation.forR.txt", header = T)
+    B <- fread("/Users/alvarezjerezp2/Desktop/HGMD_info/HGMD_FA2H.txt", header=T)
+    colnames(B) <- c("CHR", "Start","ID","REF","ALT","HGMD_Description","HGVS_nucleotide", "HGVS_protein","Variant_class","Variant_type", "Reported_phenotype")
+    total <- merge(A,B, by="Start")
+    write.table(total, file="AMP_FA2H_HGMD.txt",  quote=F, row.names = F, sep = "\t") 
 
 Created a combined variants_of_interest_AMP.txt list with: chr start stop gene_name, with no header. Using this list for association analysis and compound heterozygous insight. Separately creating a one column list of those genes names that have variants in the variants_of_interest_AMP.txt file.
 
@@ -375,3 +380,356 @@ Association with variants of interest
 Recoding to .raw file for downstream analysis
 
     plink -bfile ALL_AMP --recode A --out ALL_AMP
+    
+# 4) Burden analyses
+Here we will be using the rvtests package to run analyses on all variants and coding variants.
+
+First we will create our coding files from the annotation. These are different than the variants_of_interest_AMP.txt file as these have not been joined with HGMD data.
+
+    awk '$6=="exonic" {print}' AMP_ATP13A2.trimmed.annotation.txt > AMP_ATP13A2.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_ATP13A2.trimmed.annotation.txt > AMP_ATP13A2.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_ATP13A2.trimmed.annotation.txt > AMP_ATP13A2.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_ATP13A2.trimmed.annotation.exonic.variants.txt AMP_ATP13A2.trimmed.annotation.splicing.variants.txt AMP_ATP13A2.trimmed.annotation.exonicsplicing.variants.txt > AMP_ATP13A2.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_ATP13A2.trimmed.annotation.coding.variants.txt > AMP_ATP13A2.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_ATP13A2 --extract range AMP_ATP13A2.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_ATP13A2_CODING
+    plink --bfile AMP_ATP13A2_CODING --recode 'vcf-fid' --out AMP_ATP13A2_CODING
+    
+    bgzip AMP_ATP13A2_CODING.vcf
+    tabix -f -p vcf AMP_ATP13A2_CODING.vcf.gz
+    
+    
+    awk '$6=="exonic" {print}' AMP_C19orf12.trimmed.annotation.txt > AMP_C19orf12.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_C19orf12.trimmed.annotation.txt > AMP_C19orf12.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_C19orf12.trimmed.annotation.txt > AMP_C19orf12.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_C19orf12.trimmed.annotation.exonic.variants.txt AMP_C19orf12.trimmed.annotation.splicing.variants.txt AMP_C19orf12.trimmed.annotation.exonicsplicing.variants.txt > AMP_C19orf12.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_C19orf12.trimmed.annotation.coding.variants.txt > AMP_C19orf12.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_C19orf12 --extract range AMP_C19orf12.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_C19orf12_CODING
+    plink --bfile AMP_C19orf12_CODING --recode 'vcf-fid' --out AMP_C19orf12_CODING
+    
+    bgzip AMP_C19orf12_CODING.vcf
+    tabix -f -p vcf AMP_C19orf12_CODING.vcf.gz
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_COASY.trimmed.annotation.txt > AMP_COASY.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_COASY.trimmed.annotation.txt > AMP_COASY.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_COASY.trimmed.annotation.txt > AMP_COASY.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_COASY.trimmed.annotation.exonic.variants.txt AMP_COASY.trimmed.annotation.splicing.variants.txt AMP_COASY.trimmed.annotation.exonicsplicing.variants.txt > AMP_COASY.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_COASY.trimmed.annotation.coding.variants.txt > AMP_COASY.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_COASY --extract range AMP_COASY.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_COASY_CODING
+    plink --bfile AMP_COASY_CODING --recode 'vcf-fid' --out AMP_COASY_CODING
+    
+    bgzip AMP_COASY_CODING.vcf
+    tabix -f -p vcf AMP_COASY_CODING.vcf.gz
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_CP.trimmed.annotation.txt > AMP_CP.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_CP.trimmed.annotation.txt > AMP_CP.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_CP.trimmed.annotation.txt > AMP_CP.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_CP.trimmed.annotation.exonic.variants.txt AMP_CP.trimmed.annotation.splicing.variants.txt AMP_CP.trimmed.annotation.exonicsplicing.variants.txt > AMP_CP.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_CP.trimmed.annotation.coding.variants.txt > AMP_CP.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_CP --extract range AMP_CP.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_CP_CODING
+    plink --bfile AMP_CP_CODING --recode 'vcf-fid' --out AMP_CP_CODING
+    
+    bgzip AMP_CP_CODING.vcf
+    tabix -f -p vcf AMP_CP_CODING.vcf.gz
+    
+    
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_DCAF17.trimmed.annotation.txt > AMP_DCAF17.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_DCAF17.trimmed.annotation.txt > AMP_DCAF17.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_DCAF17.trimmed.annotation.txt > AMP_DCAF17.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_DCAF17.trimmed.annotation.exonic.variants.txt AMP_DCAF17.trimmed.annotation.splicing.variants.txt AMP_DCAF17.trimmed.annotation.exonicsplicing.variants.txt > AMP_DCAF17.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_DCAF17.trimmed.annotation.coding.variants.txt > AMP_DCAF17.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_DCAF17 --extract range AMP_DCAF17.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_DCAF17_CODING
+    plink --bfile AMP_DCAF17_CODING --recode 'vcf-fid' --out AMP_DCAF17_CODING
+    
+    bgzip AMP_DCAF17_CODING.vcf
+    tabix -f -p vcf AMP_DCAF17_CODING.vcf.gz
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_FA2H.trimmed.annotation.txt > AMP_FA2H.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_FA2H.trimmed.annotation.txt > AMP_FA2H.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_FA2H.trimmed.annotation.txt > AMP_FA2H.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_FA2H.trimmed.annotation.exonic.variants.txt AMP_FA2H.trimmed.annotation.splicing.variants.txt AMP_FA2H.trimmed.annotation.exonicsplicing.variants.txt > AMP_FA2H.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_FA2H.trimmed.annotation.coding.variants.txt > AMP_FA2H.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_FA2H --extract range AMP_FA2H.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_FA2H_CODING
+    plink --bfile AMP_FA2H_CODING --recode 'vcf-fid' --out AMP_FA2H_CODING
+    
+    bgzip AMP_FA2H_CODING.vcf
+    tabix -f -p vcf AMP_FA2H_CODING.vcf.gz
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_FTL.trimmed.annotation.txt > AMP_FTL.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_FTL.trimmed.annotation.txt > AMP_FTL.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_FTL.trimmed.annotation.txt > AMP_FTL.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_FTL.trimmed.annotation.exonic.variants.txt AMP_FTL.trimmed.annotation.splicing.variants.txt AMP_FTL.trimmed.annotation.exonicsplicing.variants.txt > AMP_FTL.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_FTL.trimmed.annotation.coding.variants.txt > AMP_FTL.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_FTL --extract range AMP_FTL.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_FTL_CODING
+    plink --bfile AMP_FTL_CODING --recode 'vcf-fid' --out AMP_FTL_CODING
+    
+    bgzip AMP_FTL_CODING.vcf
+    tabix -f -p vcf AMP_FTL_CODING.vcf.gz
+    
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_GTPBP2.trimmed.annotation.txt > AMP_GTPBP2.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_GTPBP2.trimmed.annotation.txt > AMP_GTPBP2.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_GTPBP2.trimmed.annotation.txt > AMP_GTPBP2.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_GTPBP2.trimmed.annotation.exonic.variants.txt AMP_GTPBP2.trimmed.annotation.splicing.variants.txt AMP_GTPBP2.trimmed.annotation.exonicsplicing.variants.txt > AMP_GTPBP2.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_GTPBP2.trimmed.annotation.coding.variants.txt > AMP_GTPBP2.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_GTPBP2 --extract range AMP_GTPBP2.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_GTPBP2_CODING
+    plink --bfile AMP_GTPBP2_CODING --recode 'vcf-fid' --out AMP_GTPBP2_CODING
+    
+    bgzip AMP_GTPBP2_CODING.vcf
+    tabix -f -p vcf AMP_GTPBP2_CODING.vcf.gz
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_PANK2.trimmed.annotation.txt > AMP_PANK2.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_PANK2.trimmed.annotation.txt > AMP_PANK2.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_PANK2.trimmed.annotation.txt > AMP_PANK2.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_PANK2.trimmed.annotation.exonic.variants.txt AMP_PANK2.trimmed.annotation.splicing.variants.txt AMP_PANK2.trimmed.annotation.exonicsplicing.variants.txt > AMP_PANK2.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_PANK2.trimmed.annotation.coding.variants.txt > AMP_PANK2.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_PANK2 --extract range AMP_PANK2.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_PANK2_CODING
+    plink --bfile AMP_PANK2_CODING --recode 'vcf-fid' --out AMP_PANK2_CODING
+    
+    bgzip AMP_PANK2_CODING.vcf
+    tabix -f -p vcf AMP_PANK2_CODING.vcf.gz
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_PLA2G6.trimmed.annotation.txt > AMP_PLA2G6.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_PLA2G6.trimmed.annotation.txt > AMP_PLA2G6.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_PLA2G6.trimmed.annotation.txt > AMP_PLA2G6.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_PLA2G6.trimmed.annotation.exonic.variants.txt AMP_PLA2G6.trimmed.annotation.splicing.variants.txt AMP_PLA2G6.trimmed.annotation.exonicsplicing.variants.txt > AMP_PLA2G6.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_PLA2G6.trimmed.annotation.coding.variants.txt > AMP_ATP13A2.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_PLA2G6 --extract range AMP_PLA2G6.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_PLA2G6_CODING
+    plink --bfile AMP_PLA2G6_CODING --recode 'vcf-fid' --out AMP_PLA2G6_CODING
+    
+    bgzip AMP_PLA2G6_CODING.vcf
+    tabix -f -p vcf AMP_PLA2G6_CODING.vcf.gz
+    
+    
+    
+    
+    awk '$6=="exonic" {print}' AMP_VAC14.trimmed.annotation.txt > AMP_VAC14.trimmed.annotation.exonic.variants.txt
+    awk '$6=="splicing" {print}' AMP_VAC14.trimmed.annotation.txt > AMP_VAC14.trimmed.annotation.splicing.variants.txt
+    awk '$6=="exonic;splicing" {print}' AMP_VAC14.trimmed.annotation.txt > AMP_VAC14.trimmed.annotation.exonicsplicing.variants.txt
+    cat AMP_VAC14.trimmed.annotation.exonic.variants.txt AMP_VAC14.trimmed.annotation.splicing.variants.txt AMP_VAC14.trimmed.annotation.exonicsplicing.variants.txt > AMP_VAC14.trimmed.annotation.coding.variants.txt
+    awk '{print $1" "$2" "$2" "$7}' AMP_VAC14.trimmed.annotation.coding.variants.txt > AMP_VAC14.trimmed.annotation.coding.variants.SNPs.txt
+    
+    plink --bfile AMP_VAC14 --extract range AMP_VAC14.trimmed.annotation.coding.variants.txt --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out AMP_VAC14_CODING
+    plink --bfile AMP_VAC14_CODING --recode 'vcf-fid' --out AMP_VAC14_CODING
+    
+    bgzip AMP_VAC14_CODING.vcf
+    tabix -f -p vcf AMP_VAC14_CODING.vcf.gz
+
+Need to make pheno file with rvtests requirements, MAT and PAT columns.
+
+    cp /data/CARD/PD/AMP_NIH/no_relateds/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt pheno_rvtests_AMP.txt
+    # Added PAT and MAT col with 0 values
+    head pheno_rvtests_AMP.txt
+      # FID	IID	PAT	MAT	SEX	AGE_ANALYSIS	PC1	PC2	PC3	PC4	PC5	PD_PHENO
+    # 001_10 001_10	0	0	1	62	-0.04517551	-0.006875955	0.01393995	0.04467011	-0.02931715	1
+
+Run the rvtests analysis as a job. Running for all variant at MAF 0.01 and 0.03 and coding variants for MAF 0.01 and 0.03
+
+    sbatch --mem=200g --cpus-per-task=10 --time=48:00:00 rvtests_batch_AMP.sh
+   
+   Example of what it looks like inside rvtests_batch_AMP.sh
+   #!/bin/bash
+
+module load rvtests
+
+    rvtest --noweb --inVcf AMP_ATP13A2.vcf.gz  --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 --out AMP_ATP13A2_PD_BURDEN_maf003
+    rvtest --noweb --inVcf AMP_ATP13A2.vcf.gz --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.01 --out AMP_ATP13A2_PD_BURDEN_maf001
+    rvtest --noweb --inVcf AMP_ATP13A2_CODING.vcf.gz --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 --out AMP_ATP13A2_PD_BURDEN_maf003_CODING
+    rvtest --noweb --inVcf AMP_ATP13A2_CODING.vcf.gz --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.01 --out AMP_ATP13A2_PD_BURDEN_maf001_CODING
+    # This example only has for ATP13A2, repeat commands for all other genes
+
+
+Next running gene-set burden analysis for all variants and coding variants.
+
+Like earlier, need to combine gene files. For all variants, combine the files from the very beginning (AMP_ATP13A2).
+
+    vim gene_all_outputs.txt
+    # Has AMP_$GENE list for all genes except ATP13A2
+    plink --bfile AMP_ATP13A2 --merge-list gene_all_outputs.txt --make-bed --out GENE_SET_ALL
+    plink --bfile GENE_SET_ALL --update-sex  /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out GENE_SET_ALL
+    module load samtools
+    plink --bfile GENE_SET_ALL --recode 'vcf-fid' --out GENE_SET_ALL
+    
+    bgzip GENE_SET_ALL.vcf
+    tabix -f -p vcf GENE_SET_ALL.vcf.gz
+
+Do same thing for coding files created above.
+
+    vim coding_all_outputs_AMP.txt
+    # Has AMP_$GENE_CODING list for all genes except ATP13A2.
+    plink --bfile AMP_ATP13A2_CODING --merge-list coding_all_outputs_AMP.txt --make-bed --out GENE_SET_CODING_AMP
+    plink --bfile GENE_SET_CODING_AMP --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out GENE_SET_CODING_AMP
+
+    plink --bfile GENE_SET_CODING_AMP --recode 'vcf-fid' --out GENE_SET_CODING_AMP
+    
+    bgzip GENE_SET_CODING_AMP.vcf
+    tabix -f -p vcf GENE_SET_CODING_AMP.vcf.gz
+
+   Run burden analysis
+  
+
+     sh run_burden_pathways_NBIA_AMP.sh GENE_SET_ALL.vcf.gz 0.05
+     sh run_burden_pathways_NBIA_AMP.sh GENE_SET_CODING_AMP.vcf.gz 0.05
+    # Look inside run_burden_pathways_NBIA_AMP.sh
+       # !/bin/sh
+	    #sh run_burden_pathways_NBIA_AMP.sh GENE_SET_ALL.vcf.gz 0.05
+	    module load rvtests
+	    FILENAME=$1
+	    MAF=$2
+	    OUTNAME=${FILENAME/".vcf.gz"/""}
+	    COV_NAME=pheno_rvtests_AMP.txt
+	    rvtest --noweb --hide-covar --out ${OUTNAME}_freqUpper${MAF}_PATHWAY --kernel skato \
+	    --inVcf /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/${FILENAME} \
+	    --pheno ${COV_NAME} \
+	    --pheno-name PD_PHENO \
+	    --covar ${COV_NAME} \
+	    --freqUpper $MAF \
+	    --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
+	    --setFile /data/CARD/projects/GBA_PILAR/NBIA/set_file.txt
+       
+# 5) Compound heterozygotes
+Python script from Sara BC.
+
+    python
+    import pandas as pd
+    
+    # Load in genotype file and get genotypes as 2 (homoz for alternate allele), 1 (heterozygous) and 0 homoz for reference allele
+    df = pd.read_csv('ALL_AMP.raw', sep = ' ')
+    df.head()
+    # Remove no phenotype samples
+    df = df[df.PHENOTYPE != -9]
+    df.head()
+    df.shape
+    # Making subset table of sample info
+    info = df[['FID','IID','PAT','MAT','SEX','PHENOTYPE']]
+    df.columns
+    # Making subset table without info
+    df_sub = df[['FID', 'IID', 'chr1:16988161:T:A_A',
+           'chr1:16991787:G:A_A', 'chr1:17000494:G:A_A', 'chr1:17005754:G:A_A',
+           'chr2:171449955:C:T_T', 'chr2:171481070:T:C_C', 'chr3:149178609:C:G_G',
+           'chr3:149183513:C:T_T', 'chr3:149185366:G:A_A', 'chr3:149199783:G:A_A',
+           'chr3:149212616:C:G_G', 'chr16:74740048:C:T_T', 'chr16:74740049:G:A_A',
+           'chr16:74774524:C:T_T', 'chr16:74774662:G:C_C', 'chr19:29702747:T:C_C',
+           'chr19:29702888:C:T_T', 'chr19:29702977:C:A_A', 'chr19:29702977:C:G_G',
+           'chr19:48966341:G:T_T', 'chr20:3889237:A:T_T', 'chr20:3907997:A:G_G',
+           'chr20:3910812:A:G_G', 'chr20:3918695:G:A_A', 'chr20:3918719:A:G_G',
+           'chr22:38112212:A:C_C', 'chr22:38112541:G:A_A', 'chr22:38126390:T:C_C',
+           'chr22:38132890:C:T_T', 'chr22:38132917:C:T_T', 'chr22:38132952:G:A_A',
+           'chr22:38133007:G:A_A', 'chr22:38143275:C:T_T', 'chr22:38169240:T:C_C',
+           'chr22:38169326:G:A_A', 'chr22:38169336:C:T_T', 'chr22:38169411:G:A_A',
+           'chr22:38169426:T:C_C']]
+    df_sub.head()
+    df_sub.shape
+    # Identifying patients homozygous for alt allele
+    homo = df_sub[df_sub.values == 2]
+    homo = homo.drop_duplicates()
+    print(homo.shape)
+    homo.head()
+    homo.columns
+    homo_info = pd.merge(homo,info, how='left', left_on=['FID','IID'], right_on = ['FID','IID'])
+    homo_info = homo_info[['FID', 'IID', 'PAT', 'MAT', 'SEX', 'PHENOTYPE', 'chr1:16988161:T:A_A',
+           'chr1:16991787:G:A_A', 'chr1:17000494:G:A_A', 'chr1:17005754:G:A_A',
+           'chr2:171449955:C:T_T', 'chr2:171481070:T:C_C', 'chr3:149178609:C:G_G',
+           'chr3:149183513:C:T_T', 'chr3:149185366:G:A_A', 'chr3:149199783:G:A_A',
+           'chr3:149212616:C:G_G', 'chr16:74740048:C:T_T', 'chr16:74740049:G:A_A',
+           'chr16:74774524:C:T_T', 'chr16:74774662:G:C_C', 'chr19:29702747:T:C_C',
+           'chr19:29702888:C:T_T', 'chr19:29702977:C:A_A', 'chr19:29702977:C:G_G',
+           'chr19:48966341:G:T_T', 'chr20:3889237:A:T_T', 'chr20:3907997:A:G_G',
+           'chr20:3910812:A:G_G', 'chr20:3918695:G:A_A', 'chr20:3918719:A:G_G',
+           'chr22:38112212:A:C_C', 'chr22:38112541:G:A_A', 'chr22:38126390:T:C_C',
+           'chr22:38132890:C:T_T', 'chr22:38132917:C:T_T', 'chr22:38132952:G:A_A',
+           'chr22:38133007:G:A_A', 'chr22:38143275:C:T_T', 'chr22:38169240:T:C_C',
+           'chr22:38169326:G:A_A', 'chr22:38169336:C:T_T', 'chr22:38169411:G:A_A',
+           'chr22:38169426:T:C_C']]
+    homo_info.head()
+    # Option to drop NA samples here 
+    homo_info_control = homo_info.loc[homo_info['PHENOTYPE'] == 1]
+    print(homo_info_control.shape)
+    homo_info_case = homo_info.loc[homo_info['PHENOTYPE'] == 2]
+    print(homo_info_case.shape)
+    homo_info.to_csv('AMP_coding.homo_MAF001.txt', sep = '\t', index=False)
+    homo_info_control.to_csv('AMP_coding_control.homo_MAF001.txt', sep = '\t', index=False)
+    homo_info_case.to_csv('AMP_coding_case.homo_MAF001.txt', sep = '\t', index=False)
+    # Identifying patients heterozygous for alt allele
+    het = df_sub[df_sub.values == 1]
+    het = het.drop_duplicates()
+    print(het.shape)
+    het.head()
+    het.columns
+    het['count'] = het [['chr1:16988161:T:A_A', 'chr1:16991787:G:A_A',
+           'chr1:17000494:G:A_A', 'chr1:17005754:G:A_A', 'chr2:171449955:C:T_T',
+           'chr2:171481070:T:C_C', 'chr3:149178609:C:G_G', 'chr3:149183513:C:T_T',
+           'chr3:149185366:G:A_A', 'chr3:149199783:G:A_A', 'chr3:149212616:C:G_G',
+           'chr16:74740048:C:T_T', 'chr16:74740049:G:A_A', 'chr16:74774524:C:T_T',
+           'chr16:74774662:G:C_C', 'chr19:29702747:T:C_C', 'chr19:29702888:C:T_T',
+           'chr19:29702977:C:A_A', 'chr19:29702977:C:G_G', 'chr19:48966341:G:T_T',
+           'chr20:3889237:A:T_T', 'chr20:3907997:A:G_G', 'chr20:3910812:A:G_G',
+           'chr20:3918695:G:A_A', 'chr20:3918719:A:G_G', 'chr22:38112212:A:C_C',
+           'chr22:38112541:G:A_A', 'chr22:38126390:T:C_C', 'chr22:38132890:C:T_T',
+           'chr22:38132917:C:T_T', 'chr22:38132952:G:A_A', 'chr22:38133007:G:A_A',
+           'chr22:38143275:C:T_T', 'chr22:38169240:T:C_C', 'chr22:38169326:G:A_A',
+           'chr22:38169336:C:T_T', 'chr22:38169411:G:A_A', 'chr22:38169426:T:C_C']].sum(axis=1)
+    het.head()
+    # Finding samples with more than one alt allele (compount het)
+    het_comp = het.loc[het['count'] > 1]
+    het_comp = het_comp.drop_duplicates()
+    print(het_comp.shape)
+    het_comp.head()
+    new_df = pd.merge(het_comp, info,  how='left', left_on=['FID','IID'], right_on = ['FID','IID'])
+    new_df = new_df[['FID', 'IID', 'PAT', 'MAT', 'SEX', 'PHENOTYPE', 'chr1:16988161:T:A_A',
+           'chr1:16991787:G:A_A', 'chr1:17000494:G:A_A', 'chr1:17005754:G:A_A',
+           'chr2:171449955:C:T_T', 'chr2:171481070:T:C_C', 'chr3:149178609:C:G_G',
+           'chr3:149183513:C:T_T', 'chr3:149185366:G:A_A', 'chr3:149199783:G:A_A',
+           'chr3:149212616:C:G_G', 'chr16:74740048:C:T_T', 'chr16:74740049:G:A_A',
+           'chr16:74774524:C:T_T', 'chr16:74774662:G:C_C', 'chr19:29702747:T:C_C',
+           'chr19:29702888:C:T_T', 'chr19:29702977:C:A_A', 'chr19:29702977:C:G_G',
+           'chr19:48966341:G:T_T', 'chr20:3889237:A:T_T', 'chr20:3907997:A:G_G',
+           'chr20:3910812:A:G_G', 'chr20:3918695:G:A_A', 'chr20:3918719:A:G_G',
+           'chr22:38112212:A:C_C', 'chr22:38112541:G:A_A', 'chr22:38126390:T:C_C',
+           'chr22:38132890:C:T_T', 'chr22:38132917:C:T_T', 'chr22:38132952:G:A_A',
+           'chr22:38133007:G:A_A', 'chr22:38143275:C:T_T', 'chr22:38169240:T:C_C',
+           'chr22:38169326:G:A_A', 'chr22:38169336:C:T_T', 'chr22:38169411:G:A_A',
+           'chr22:38169426:T:C_C', 'count']]
+    new_df.head()
+    # Option here to drop NA samples
+    print(new_df.shape)
+    controls = new_df.loc[new_df['PHENOTYPE'] == 1]
+    cases = new_df.loc[new_df['PHENOTYPE'] == 2]
+    
+    print(controls.shape)
+    print(cases.shape)
+    new_df.to_csv('AMP_coding_all.compound.hets_MAF001.txt', sep = '\t', index=True)
+    new_df.head()
+    cases.to_csv('AMP_coding_case.compound.hets_MAF001.txt', sep = '\t', index=True)
+    controls.to_csv('AMP_coding_control.compound.hets_MAF001.txt', sep = '\t', index=True)
+
+
+Compound heterozygotes were done for all variants/gene. Need to later go into results and only count those alt alleles that are within same gene. 
+Another option is to do this compound heterozygotes analysis gene by gene using TEMP_$GENE files created earlier.
+
