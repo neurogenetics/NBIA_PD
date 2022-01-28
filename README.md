@@ -748,14 +748,16 @@ Another option is to do this compound heterozygotes analysis gene by gene using 
 
 The analysis was then repeated with whole exome sequencing UKBiobank data. Follows same pattern as above.
 Where to find data
-	 # My working directory 
-	cd /data/CARD/projects/GBA_PILAR/NBIA/UKB
-	# Split up variants by gene (hg38)
- 	# ATP13A2 1: 16,985,958-17,011,928	
-    	awk '$4 > 16985958' /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/UKBexomeOQFE_chr1.bim | awk '$4 < 17011928' > ATP13A2_variants_UKB.txt
-	plink --bed /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/ukb23155_c1_b0_v1.bed --bim 	/data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/UKBexomeOQFE_chr1.bim \
---fam /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/ukb23155_c1_b0_v1_s200632.fam --extract ATP13A2_variants_UKB.txt --out ATP13A2_UKB --make-bed
-	# Format pheno and cov files 
-	# /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt
-	awk '{print $1, $2}' /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt > tokeep.txt
-	awk '{print $1, $2, $9}' /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt > pheno_UKB_NBIA.txt
+	 
+
+    # My working directory 
+    	cd /data/CARD/projects/GBA_PILAR/NBIA/UKB
+    	# Split up variants by gene (hg38)
+     	# ATP13A2 1: 16,985,958-17,011,928	
+        awk '$4 > 16985958' /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/UKBexomeOQFE_chr1.bim | awk '$4 < 17011928' > ATP13A2_variants_UKB.txt
+    	plink --bed /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/ukb23155_c1_b0_v1.bed --bim 	/data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/UKBexomeOQFE_chr1.bim \
+    --fam /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/ukb23155_c1_b0_v1_s200632.fam --extract ATP13A2_variants_UKB.txt --out ATP13A2_UKB --make-bed
+    	# Format pheno and cov files 
+    	# /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt
+    	awk '{print $1, $2}' /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt > tokeep.txt
+    	awk '{print $1, $2, $9}' /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt > pheno_UKB_NBIA.txt
