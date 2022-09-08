@@ -15,7 +15,7 @@
 ## Structure of ReadMe
 ### [1) Locating and extracting data for our genes of interest](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#1-locating-and-extracting-data)
 
-### [2) Annotation and finding variants of interest](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#2-annotation-and-variants-of-interest-1)
+### [2) Annotation and finding variants of interest](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#2-annotation-and-variants-of-interest)
 
 ### [3) Association analyses](https://github.com/neurogenetics/NBIA_PD/blob/main/README.md#3-association-analyses-1)
 
