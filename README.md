@@ -50,7 +50,7 @@ For the purpose of this ReadMe, we will be working with WGS AMP_PD v 2.5 data. T
 Additionally, when appropriate, we will only be showing example code for one gene to keep it clean. The code can be run individually per gene of interest or in loops.
  
 #### Working directory for analysis
-	cd /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/
+	cd /PATH/TO/NBIA/AMP_2.5_goodfiles/
  Modules needed
 ```
 module load plink
@@ -62,13 +62,13 @@ module load rvtests
  Extract genes into plink files, add pheno and update sex
 	 
 
-    plink --bfile /data/CARD/PD/AMP-PD/Plink/2021_v2_5release/euro_king_pca_v2.5_July2021/AMPv2.5_sampleQC_EURO \
+    plink --bfile /PATH/TO/AMP-PD/PLINK/RELEASE/euro_king_pca_v2.5_July2021/AMPv2.5_sampleQC_EURO \
     --chr 1 --from-bp 16985958 --to-bp 17011928 \ 
-    --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt \
+    --update-sex /PATH/TO/NBIA/AMP_2.5_goodfiles/update_sex.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt \
     --make-bed --out 
 
-     # Pheno and sex files made from /data/CARD/PD/AMP_NIH/no_relateds/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt
+     # Pheno and sex files made from /PATH/TO/AMP/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt
 
 
 
@@ -145,8 +145,8 @@ Loop to extract variants of interest from plink files.
     cat genes_list.txt | while read LINE
     do
     plink --bfile AMP_$LINE --extract range variants_of_interest_AMP.txt \
-    --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt \
+    --update-sex /PATH/TO/NBIA/AMP_2.5_goodfiles/update_sex.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt \
     --make-bed --out TEMP_$LINE
     done
 
@@ -180,12 +180,12 @@ Fisher association and logistic regression per gene
 
     # Fisher
     plink --bfile AMP_ATP13A2 --fisher \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt \
      --out AMP_ATP13A2
     # Logistic regression 
     plink --bfile AMP_ATP13A2 --logistic \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt \
-    --covar /data/CARD/PD/AMP_NIH/no_relateds/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt \
+    --covar /PATH/TO/AMP/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt \
     --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
     --out AMP_ATP13A2 --ci 0.95
 # 4) Burden analyses
@@ -205,8 +205,8 @@ First we will create our coding files from the annotation. These are different t
     
     # Make coding plink bfiles
     plink --bfile AMP_ATP13A2 --extract range AMP_ATP13A2.trimmed.annotation.coding.variants.txt \
-    --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt \
+    --update-sex /PATH/TO/NBIA/AMP_2.5_goodfiles/update_sex.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt \
     --make-bed --out AMP_ATP13A2_CODING
     
     # Make coding VCF
@@ -218,7 +218,7 @@ First we will create our coding files from the annotation. These are different t
     
 Need to make pheno file with rvtests requirements, which include MAT and PAT columns.
 
-    cp /data/CARD/PD/AMP_NIH/no_relateds/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt \
+    cp /PATH/TO/AMP/COV_PD_NIH_AMPv2.5_samplestoKeep_EuroOnly_noDups_noNIHDups_wPheno_wSex_no_cousins.txt \
     pheno_rvtests_AMP.txt
     
     # Added PAT and MAT col with 0 values
@@ -237,7 +237,7 @@ Example rvtest analyses for ATP13A2 at MAF 0.01 and 0.03
     --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO \
     --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
 	--kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald \
-	--geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 \
+	--geneFile /PATH/TO/refFlat_hg38.txt --freqUpper 0.03 \
 	--out AMP_ATP13A2_PD_BURDEN_maf003
 	
 	# All variants, MAF 0.01
@@ -245,7 +245,7 @@ Example rvtest analyses for ATP13A2 at MAF 0.01 and 0.03
     --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO \
     --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
     --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald \
-    --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.01 \
+    --geneFile /PATH/TO/refFlat_hg38.txt --freqUpper 0.01 \
     --out AMP_ATP13A2_PD_BURDEN_maf001
 	
 	# Coding variants, MAF 0.03
@@ -253,7 +253,7 @@ Example rvtest analyses for ATP13A2 at MAF 0.01 and 0.03
     --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO \
     --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
     --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald \
-    --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 \
+    --geneFile /PATH/TO/refFlat_hg38.txt --freqUpper 0.03 \
     --out AMP_ATP13A2_PD_BURDEN_maf003_CODING
     
 	# Coding variants, MAF 0.01
@@ -261,7 +261,7 @@ Example rvtest analyses for ATP13A2 at MAF 0.01 and 0.03
     --pheno pheno_rvtests_AMP.txt --pheno-name PD_PHENO \
     --covar pheno_rvtests_AMP.txt  --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
     --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald \
-    --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.01 \
+    --geneFile /PATH/TO/refFlat_hg38.txt --freqUpper 0.01 \
     --out AMP_ATP13A2_PD_BURDEN_maf001_CODING
     
     # This example only has for ATP13A2, repeat commands for all other genes
@@ -277,8 +277,8 @@ Like earlier, need to combine gene files. For all variants, combine the files fr
     --make-bed --out GENE_SET_ALL
     
     # Update sex and pheno for that joined list
-    plink --bfile GENE_SET_ALL --update-sex  /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out GENE_SET_ALL
+    plink --bfile GENE_SET_ALL --update-sex  /PATH/TO/NBIA/AMP_2.5_goodfiles/update_sex.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt --make-bed --out GENE_SET_ALL
     
 	# Make VCF
     plink --bfile GENE_SET_ALL --recode 'vcf-fid' --out GENE_SET_ALL
@@ -292,8 +292,8 @@ Do same thing for coding files created above.
     plink --bfile AMP_ATP13A2_CODING --merge-list coding_all_outputs_AMP.txt \
     --make-bed --out GENE_SET_CODING_AMP
     
-    plink --bfile GENE_SET_CODING_AMP --update-sex /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/update_sex.txt \
-    --pheno /data/CARD/projects/GBA_PILAR/NBIA/pheno_ampv2.5.txt --make-bed --out GENE_SET_CODING_AMP
+    plink --bfile GENE_SET_CODING_AMP --update-sex /PATH/TO/NBIA/AMP_2.5_goodfiles/update_sex.txt \
+    --pheno /PATH/TO/NBIA/pheno_ampv2.5.txt --make-bed --out GENE_SET_CODING_AMP
 	
 	plink --bfile GENE_SET_CODING_AMP --recode 'vcf-fid' --out GENE_SET_CODING_AMP
     bgzip GENE_SET_CODING_AMP.vcf
@@ -314,13 +314,13 @@ Do same thing for coding files created above.
 	    OUTNAME=${FILENAME/".vcf.gz"/""}
 	    COV_NAME=pheno_rvtests_AMP.txt
 	    rvtest --noweb --hide-covar --out ${OUTNAME}_freqUpper${MAF}_PATHWAY --kernel skato \
-	    --inVcf /data/CARD/projects/GBA_PILAR/NBIA/AMP_2.5_goodfiles/${FILENAME} \
+	    --inVcf /PATH/TO/NBIA/AMP_2.5_goodfiles/${FILENAME} \
 	    --pheno ${COV_NAME} \
 	    --pheno-name PD_PHENO \
 	    --covar ${COV_NAME} \
 	    --freqUpper $MAF \
 	    --covar-name SEX,AGE_ANALYSIS,PC1,PC2,PC3,PC4,PC5 \
-	    --setFile /data/CARD/projects/GBA_PILAR/NBIA/set_file.txt
+	    --setFile /PATH/TO/NBIA/set_file.txt
        
 # 5) Compound heterozygotes
 
@@ -450,21 +450,21 @@ Where to find data:
 	 
 
     # My working directory 
-    cd /data/CARD/projects/GBA_PILAR/NBIA/UKB
+    cd /PATH/TO/NBIA/UKB
     # Split up variants by gene (hg38)
     # ATP13A2 1: 16,985,958-17,011,928	
-    awk '$4 > 16985958' /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/UKBexomeOQFE_chr1.bim | awk '$4 < 17011928' > ATP13A2_variants_UKB.txt
+    awk '$4 > 16985958' /PATH/TO/UKBIOBANK/UKBexomeOQFE_chr1.bim | awk '$4 < 17011928' > ATP13A2_variants_UKB.txt
         
-    plink --bed /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/ukb23155_c1_b0_v1.bed \
-    --bim /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/UKBexomeOQFE_chr1.bim \
-    --fam /data/CARD/UKBIOBANK/EXOME_DATA_200K/PLINK_files/ukb23155_c1_b0_v1_s200632.fam \
+    plink --bed /PATH/TO/UKBIOBANK/ukb23155_c1_b0_v1.bed \
+    --bim /PATH/TO/UKBIOBANK/UKBexomeOQFE_chr1.bim \
+    --fam /PATH/TO/UKBIOBANK/ukb23155_c1_b0_v1_s200632.fam \
     --extract ATP13A2_variants_UKB.txt --out ATP13A2_UKB --make-bed
     
     
     	
-    # Covariate file found here: /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt 
+    # Covariate file found here: /PATH/TO/NBIA/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt 
 	# To format pheno file
-    awk '{print $1, $2, $9}' /data/CARD/projects/GBA_PILAR/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt > pheno_UKB_NBIA.txt
+    awk '{print $1, $2, $9}' /PATH/TO/NBIA/UKB_EXOM_PD_CASE_CONTROL_2021_with_PC.txt > pheno_UKB_NBIA.txt
 
 For transcriptomics script please contact us.
 
