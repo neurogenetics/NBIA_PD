@@ -299,7 +299,8 @@ Do same thing for coding files created above.
     bgzip GENE_SET_CODING_AMP.vcf
     tabix -f -p vcf GENE_SET_CODING_AMP.vcf.gz
 
-   Run gene-set burden analysis
+   Run gene-set burden analysis-Script by Mary Makarious
+ 
   
 
      sh run_burden_pathways_NBIA_AMP.sh GENE_SET_ALL.vcf.gz 0.05
